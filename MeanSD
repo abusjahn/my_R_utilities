@@ -1,7 +1,7 @@
 MeanSD<-function(x,roundDig=2)
 {
   out<-''
-  meansd<-smartround(
+  meansd<-roundR(
     matrix(c(mean(x,na.rm=T),
              sd(x,na.rm=T)),
            ncol=2,byrow=F),level=roundDig)
