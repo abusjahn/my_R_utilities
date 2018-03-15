@@ -1,11 +1,39 @@
-MeanSD<-function(x,roundDig=2)
+MeanSD<-function(x,roundDig=2,drop0=F,groupvar=NULL,
+                        range=F,rangesep='ARRR')
 {
   out<-''
-  meansd<-roundR(
+  #   if(is.na(roundDig))
+  #   {
+  #     out<-paste(roundR(mean(x,na.rm=T)),
+  #                roundR(sd(x,na.rm=T)),
+  #                sep='\u00B1')
+  #   } else
+  #   {
+  if(is.null(groupvar))
+  {
+    meansd<-roundR(
     matrix(c(mean(x,na.rm=T),
-             sd(x,na.rm=T)),
-           ncol=2,byrow=F),level=roundDig)
+             sd(x,na.rm=T),
+             min(x,na.rm=T),
+             max(x,na.rm=T)),
+             ncol=4,byrow=F),level=roundDig,
+    drop0=drop0)
+  } else
+  {
+    meansd<-roundR(
+      matrix(c(by(x,groupvar,mean,na.rm=T),
+               by(x,groupvar,sd,na.rm=T),
+               by(x,groupvar,min,na.rm=T),
+               by(x,groupvar,max,na.rm=T)),
+    ncol=4,byrow=F),level=roundDig,
+      drop0=drop0)
+
+  }
   out<-paste(meansd[,1],meansd[,2],sep='\u00B1')
+  if(range)
+  {
+    out<-paste0(out,rangesep, ' [',apply(matrix(meansd[,3:4],ncol=2),1,paste,collapse=' -> '),']') #\u22ef
+  }
   #   }
   return(out)
 }
